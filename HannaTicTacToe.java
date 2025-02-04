@@ -1,61 +1,66 @@
-import java.util.Queue;
 import java.util.Scanner;
-import java.util.LinkedList;
 
 public class HannaTicTacToe {
-    public class Node {
-        char[][] board;
-        int depth;
-        String move;
-        char colour;
-
-        public Node(char[][] board, int depth, String move, char colour) {
-            this.board = board;
-            this.depth = depth;
-            this.move = move;
-            this.colour = colour;
+    private static void initializeBoard(char[][] board) {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                board[i][j] = '-';
+            }
         }
     }
 
-    // private static char[][] board = new char[3][3];
-    private static Queue<Node> queue = new LinkedList<>();
-    private static char myColour;
-    private static char opponentColour;
+    private static void updateBoard(String position, char colour, char[][] board) {
+        int col = position.charAt(0) - 'a';
+        int row = 3 - (position.charAt(1) - '0');
+        System.out.println("Updating position: row: " + row + ", col: " + col);
 
-    // private static void initializeBoard() {
-    // for (int i = 0; i < 3; i++) {
-    // for (int j = 0; j < 3; j++) {
-    // board[i][j] = ' ';
-    // }
-    // }
-    // }
+        // Before update
+        System.out.println("Before Update:");
+        printBoard(board);
 
-    private static void updateBoard(String position, char colour) {
-        int row = position.charAt(0) - 'a'; // Convert 'a' to 0, 'b' to 1, 'c' to 2
-        int col = position.charAt(1) - '1'; // Convert '1' to 0, '2' to 1, '3' to 2
         board[row][col] = colour;
+
+        // After update
+        System.out.println("After Update:");
+        printBoard(board);
     }
 
-    private static boolean isWin() {
+    private static void printBoard(char[][] board) {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                System.out.print(board[i][j] + " ");
+            }
+            System.out.println();
+        }
+    }
+
+    private static boolean isWin(char[][] board, char currentPlayer) {
         // Check rows, columns, and diagonals for a win
         for (int i = 0; i < 3; i++) {
-            if ((board[i][0] == board[i][1] && board[i][1] == board[i][2] && board[i][0] != ' ') ||
-                    (board[0][i] == board[1][i] && board[1][i] == board[2][i] && board[0][i] != ' ')) { // Check rows
-                                                                                                        // and columns
+            if (board[i][0] == board[i][1] && board[i][1] == board[i][2] && board[i][0] == currentPlayer) { // Check
+                                                                                                            // rows
+                return true;
+            }
+            if (board[0][i] == board[1][i] && board[1][i] == board[2][i] && board[0][i] == currentPlayer) { // Check
+                                                                                                            // columns
                 return true;
             }
         }
-        if ((board[0][0] == board[1][1] && board[1][1] == board[2][2] && board[0][0] != ' ') ||
-                (board[0][2] == board[1][1] && board[1][1] == board[2][0] && board[0][2] != ' ')) { // Check diagonals
+        if (board[0][0] == board[1][1] && board[1][1] == board[2][2] && board[0][0] == currentPlayer) { // Check
+                                                                                                        // diagonals
+            return true;
+        }
+        if (board[0][2] == board[1][1] && board[1][1] == board[2][0] && board[0][2] == currentPlayer) { // Check
+                                                                                                        // diagonals
             return true;
         }
         return false;
     }
 
-    private static boolean isDraw() {
+    private static boolean isDraw(char[][] board) {
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                if (board[i][j] == ' ') {
+                if (board[i][j] == '-') {
                     return false;
                 }
             }
@@ -63,57 +68,38 @@ public class HannaTicTacToe {
         return true;
     }
 
-    private static int evaluate(char[][] board) {
+    private static int evaluate(char[][] board, char currentPlayer, char opponentColour) {
         // Check rows, columns, and diagonals for a win
         for (int i = 0; i < 3; i++) {
-            if (board[i][0] == board[i][1] && board[i][1] == board[i][2]) { // Check rows
-                if (board[i][0] == myColour) {
-                    return 10;
-                } else if (board[i][0] == opponentColour) {
-                    return -10;
-                }
+            if (board[i][0] == board[i][1] && board[i][1] == board[i][2] && board[i][0] != '-') { // Check rows
+                return (board[i][0] == currentPlayer) ? 10 : -10;
             }
-            if (board[0][i] == board[1][i] && board[1][i] == board[2][i]) { // Check columns
-                if (board[0][i] == myColour) {
-                    return 10;
-                } else if (board[0][i] == opponentColour) {
-                    return -10;
-                }
+            if (board[0][i] == board[1][i] && board[1][i] == board[2][i] && board[0][i] != '-') { // Check columns
+                return (board[0][i] == currentPlayer) ? 10 : -10;
             }
         }
-        if (board[0][0] == board[1][1] && board[1][1] == board[2][2]) { // Check diagonals
-            if (board[0][0] == myColour) {
-                return 10;
-            } else if (board[0][0] == opponentColour) {
-                return -10;
-            }
+        if (board[0][0] == board[1][1] && board[1][1] == board[2][2] && board[0][0] != '-') { // Check diagonals
+            return (board[0][0] == currentPlayer) ? 10 : -10;
         }
-        if (board[0][2] == board[1][1] && board[1][1] == board[2][0]) { // Check diagonals
-            if (board[0][2] == myColour) {
-                return 10;
-            } else if (board[0][2] == opponentColour) {
-                return -10;
-            }
+        if (board[0][2] == board[1][1] && board[1][1] == board[2][0] && board[0][2] != '-') { // Check diagonals
+            return (board[0][2] == currentPlayer) ? 10 : -10;
         }
         return 0;
     }
 
-    private static int findBestMove(char[][] board) {
-        System.out.println("In findBestMove");
+    private static int findBestMove(char[][] board, char myColour, char opponentColour) {
         int bestScore = Integer.MIN_VALUE;
         int bestMove = -1; // Initialize best move to an invalid position
+        printBoard(board);
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                System.out.println("BOARD CURR: " + board[i][j]);
-                if (board[i][j] == ' ') {
-                    System.out.println("In findBestMove loop: " + i + " " + j);
-                    board[i][j] = myColour;
-                    int score = minimax(board, 0, false);
-                    board[i][j] = ' ';
+                if (board[i][j] == '-') {
+                    board[i][j] = opponentColour;
+                    int score = minimax(board, 0, false, myColour, opponentColour);
+                    board[i][j] = '-';
                     if (score > bestScore) {
                         bestScore = score;
                         bestMove = i * 3 + j; // Convert 2D array index to 1D array index
-                        System.out.println("Best move is in findBestMove: " + bestMove);
                     }
                 }
             }
@@ -121,14 +107,16 @@ public class HannaTicTacToe {
         return bestMove;
     }
 
-    private static int minimax(char[][] board, int depth, boolean isMaximizing) {
-        int utility = evaluate(board);
-        System.out.println("Utility: " + utility);
-        if (utility == 10 || utility == -10) {
-            return utility;
+    private static int minimax(char[][] board, int depth, boolean isMaximizing, char myColour, char opponentColour) {
+        System.out.println("Board at depth " + depth);
+        printBoard(board);
+        if (isWin(board, isMaximizing ? opponentColour : myColour)) {
+            return (isMaximizing ? -10 : 10) + (isMaximizing ? depth : -depth);
         }
 
-        if (isDraw()) {
+        if (isDraw(board)) {
+            System.out.println("Draw");
+            System.out.println("Draw detected at depth " + depth);
             return 0;
         }
 
@@ -136,10 +124,14 @@ public class HannaTicTacToe {
             int bestScore = Integer.MIN_VALUE;
             for (int i = 0; i < 3; i++) {
                 for (int j = 0; j < 3; j++) {
-                    board[i][j] = myColour;
-                    int val = minimax(board, depth + 1, !isMaximizing);
-                    bestScore = Math.max(bestScore, val);
-                    board[i][j] = ' ';
+                    System.out.println("i: " + i + " j: " + j);
+                    System.out.println("board[i][j]: " + board[i][j]);
+                    if (board[i][j] == '-') {
+                        board[i][j] = myColour;
+                        int val = minimax(board, depth + 1, false, myColour, opponentColour);
+                        board[i][j] = '-';
+                        bestScore = Math.max(bestScore, val);
+                    }
                 }
             }
             return bestScore;
@@ -147,10 +139,14 @@ public class HannaTicTacToe {
             int bestScore = Integer.MAX_VALUE;
             for (int i = 0; i < 3; i++) {
                 for (int j = 0; j < 3; j++) {
-                    board[i][j] = opponentColour;
-                    int val = minimax(board, depth + 1, !isMaximizing);
-                    bestScore = Math.min(bestScore, val);
-                    board[i][j] = ' ';
+                    System.out.println("i: " + i + " j: " + j);
+                    System.out.println("board[i][j]: " + board[i][j]);
+                    if (board[i][j] == '-') {
+                        board[i][j] = opponentColour;
+                        int val = minimax(board, depth + 1, true, myColour, opponentColour);
+                        board[i][j] = '-';
+                        bestScore = Math.min(bestScore, val);
+                    }
                 }
             }
             return bestScore;
@@ -159,19 +155,46 @@ public class HannaTicTacToe {
 
     public static void main(String[] args) {
 
-        char[][] board = { { 'x', 'o', 'x' },
-                { 'o', 'o', 'x' },
-                { ' ', ' ', ' ' } };
+        char[][] board = new char[3][3];
+        initializeBoard(board);
 
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                System.out.print(board[i][j] + " ");
+        // b goes first
+        // o goes second
+        // Opponent uses minimax to find best move
+
+        Scanner scanner = new Scanner(System.in);
+        char myColour = 'b';
+        char opponentColour = (myColour == 'b') ? 'o' : 'b';
+        while (true) {
+            System.out.println("Enter your move:");
+            String input = scanner.nextLine().trim();
+            System.out.println("Your move is: " + input);
+            updateBoard(input, myColour, board);
+            if (isWin(board, myColour)) {
+                System.out.println("You win!");
+                break;
             }
-            System.out.println();
+            int bestMove = findBestMove(board, myColour, opponentColour);
+            System.out.println("Best move is: " + bestMove);
+            // Convert move to a,b,c and 1,2,3
+            char row = (char) (bestMove / 3 + 'a');
+            char col = (char) (bestMove % 3 + '1');
+            System.out.println("Best move is: " + row + col);
+            updateBoard(row + "" + col, opponentColour, board);
+            if (isWin(board, opponentColour)) {
+                System.out.println("You lose!");
+                break;
+            }
+            System.out.flush();
         }
-        int bestMove = findBestMove(board);
-        System.out.println("Best move is: " + bestMove);
-        System.out.println("Best move is: " + bestMove / 3 + " " + bestMove % 3);
+        scanner.close();
+
+        // System.out.println("Best move is: " + bestMove);
+        // System.out.println("Best move is: " + bestMove / 3 + " " + bestMove % 3);
+        // // Convert move to a,b,c and 1,2,3
+        // char row = (char) (bestMove / 3 + 'a');
+        // char col = (char) (bestMove % 3 + '1');
+        // System.out.println("Best move is: " + row + col);
         // initializeBoard();
         // Scanner scanner = new Scanner(System.in);
         // myColour = scanner.nextLine().charAt(0);
