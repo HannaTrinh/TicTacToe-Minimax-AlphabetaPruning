@@ -65,25 +65,6 @@ public class HannaTicTacToe {
         return true;
     }
 
-    private static int evaluate(char[][] board, char currentPlayer, char opponentColour) {
-        // Check rows, columns, and diagonals for a win
-        for (int i = 0; i < 3; i++) {
-            if (board[i][0] == board[i][1] && board[i][1] == board[i][2] && board[i][0] != '-') { // Check rows
-                return (board[i][0] == currentPlayer) ? 10 : -10;
-            }
-            if (board[0][i] == board[1][i] && board[1][i] == board[2][i] && board[0][i] != '-') { // Check columns
-                return (board[0][i] == currentPlayer) ? 10 : -10;
-            }
-        }
-        if (board[0][0] == board[1][1] && board[1][1] == board[2][2] && board[0][0] != '-') { // Check diagonals
-            return (board[0][0] == currentPlayer) ? 10 : -10;
-        }
-        if (board[0][2] == board[1][1] && board[1][1] == board[2][0] && board[0][2] != '-') { // Check diagonals
-            return (board[0][2] == currentPlayer) ? 10 : -10;
-        }
-        return 0;
-    }
-
     private static String findBestMove(char[][] board, char myColour, char opponentColour) {
         int bestScore = Integer.MIN_VALUE;
         String bestMove = ""; // Initialize best move to an invalid position
@@ -91,7 +72,8 @@ public class HannaTicTacToe {
             for (int j = 0; j < 3; j++) {
                 if (board[i][j] == '-') {
                     board[i][j] = opponentColour;
-                    int score = minimax(board, 0, false, myColour, opponentColour);
+                    int score = minimax(board, 0, false, myColour, opponentColour, Integer.MIN_VALUE,
+                            Integer.MAX_VALUE);
                     board[i][j] = '-';
                     if (score > bestScore) {
                         bestScore = score;
@@ -103,7 +85,8 @@ public class HannaTicTacToe {
         return bestMove;
     }
 
-    private static int minimax(char[][] board, int depth, boolean isMaximizing, char myColour, char opponentColour) {
+    private static int minimax(char[][] board, int depth, boolean isMaximizing, char myColour, char opponentColour,
+            int alpha, int beta) {
         if (isWin(board)) {
             return (isMaximizing ? -10 : 10) + (isMaximizing ? depth : -depth);
         }
@@ -118,9 +101,13 @@ public class HannaTicTacToe {
                 for (int j = 0; j < 3; j++) {
                     if (board[i][j] == '-') {
                         board[i][j] = opponentColour;
-                        int val = minimax(board, depth + 1, false, myColour, opponentColour);
+                        int val = minimax(board, depth + 1, false, myColour, opponentColour, alpha, beta);
                         board[i][j] = '-';
                         bestScore = Math.max(bestScore, val);
+                        alpha = Math.max(alpha, bestScore);
+                        if (beta <= alpha) {
+                            break;
+                        }
                     }
                 }
             }
@@ -131,9 +118,13 @@ public class HannaTicTacToe {
                 for (int j = 0; j < 3; j++) {
                     if (board[i][j] == '-') {
                         board[i][j] = myColour;
-                        int val = minimax(board, depth + 1, true, myColour, opponentColour);
+                        int val = minimax(board, depth + 1, true, myColour, opponentColour, alpha, beta);
                         board[i][j] = '-';
                         bestScore = Math.min(bestScore, val);
+                        beta = Math.min(beta, bestScore);
+                        if (beta <= alpha) {
+                            break;
+                        }
                     }
                 }
             }
