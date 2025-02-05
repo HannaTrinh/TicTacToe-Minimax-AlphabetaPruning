@@ -19,8 +19,8 @@ public class HannaTicTacToe {
             return;
         }
 
-        int col = position.charAt(0) - 'a';
         int row = 3 - (position.charAt(1) - '0');
+        int col = position.charAt(0) - 'a';
         board[row][col] = colour;
         printBoard(board);
     }
@@ -100,7 +100,7 @@ public class HannaTicTacToe {
             for (int i = 0; i < 3; i++) {
                 for (int j = 0; j < 3; j++) {
                     if (board[i][j] == '-') {
-                        board[i][j] = opponentColour;
+                        board[i][j] = myColour;
                         int val = minimax(board, depth + 1, false, myColour, opponentColour, alpha, beta);
                         board[i][j] = '-';
                         bestScore = Math.max(bestScore, val);
@@ -117,7 +117,7 @@ public class HannaTicTacToe {
             for (int i = 0; i < 3; i++) {
                 for (int j = 0; j < 3; j++) {
                     if (board[i][j] == '-') {
-                        board[i][j] = myColour;
+                        board[i][j] = opponentColour;
                         int val = minimax(board, depth + 1, true, myColour, opponentColour, alpha, beta);
                         board[i][j] = '-';
                         bestScore = Math.min(bestScore, val);
@@ -133,80 +133,49 @@ public class HannaTicTacToe {
     }
 
     public static void main(String[] args) {
-
-        char[][] board = new char[3][3];
-        initializeBoard(board);
-        printBoard(board);
-
         Scanner scanner = new Scanner(System.in);
-        char myColour = 'b';
-        char opponentColour = (myColour == 'b') ? 'o' : 'b';
-        while (true) {
-            System.out.println("Enter your move:");
-            String input = scanner.nextLine().trim();
-            System.out.println("Your move is: " + input);
-            updateBoard(input, myColour, board);
-            if (isWin(board)) {
-                System.out.println("You win!");
+        char[][] board = new char[3][3];
+        String bestMove = "";
+        String bestMoveConverted = "";
+
+        // Initialize board
+        initializeBoard(board);
+        // printBoard(board);
+
+        // Get colour assignment
+        System.out.println("Assign Colour: b or o");
+        String input = scanner.nextLine().trim();
+        char hanna = input.charAt(0); // Get's colour assignment
+        input = scanner.nextLine().trim();
+        char opponentColour = input.charAt(0); // Assigns opponent colour
+
+        if (hanna == 'b') {
+            bestMove = findBestMove(board, hanna, opponentColour);
+            bestMoveConverted = (char) ('a' + (bestMove.charAt(1) - '0')) + "" + (3 - (bestMove.charAt(0) - '0'));
+            System.out.println(bestMoveConverted);
+            updateBoard(input, hanna, board);
+        } else {
+            input = scanner.nextLine().trim();
+            updateBoard(input, opponentColour, board);
+        }
+
+        while (scanner.hasNextLine()) {
+            input = scanner.nextLine().trim();
+            updateBoard(input, opponentColour, board);
+            if (scanner.hasNext("END")) {
+                System.out.println(input);
                 break;
             }
-            if (isDraw(board)) {
-                System.out.println("Draw!");
-                break;
-            }
-            String bestMove = findBestMove(board, myColour, opponentColour);
-            System.out.println("Best move is: " + bestMove);
-            updateBoard(bestMove, opponentColour, board);
-            if (isWin(board)) {
-                System.out.println("You lose!");
-                break;
-            }
-            if (isDraw(board)) {
-                System.out.println("Draw!");
+            bestMove = findBestMove(board, hanna, opponentColour);
+            bestMoveConverted = (char) ('a' + (bestMove.charAt(1) - '0')) + "" + (3 - (bestMove.charAt(0) - '0'));
+            System.out.println(bestMoveConverted);
+            updateBoard(bestMove, hanna, board);
+            if (scanner.hasNext("END")) {
+                System.out.println(input);
                 break;
             }
             System.out.flush();
         }
         scanner.close();
-
-        // System.out.println("Best move is: " + bestMove);
-        // System.out.println("Best move is: " + bestMove / 3 + " " + bestMove % 3);
-        // // Convert move to a,b,c and 1,2,3
-        // char row = (char) (bestMove / 3 + 'a');
-        // char col = (char) (bestMove % 3 + '1');
-        // System.out.println("Best move is: " + row + col);
-        // initializeBoard();
-        // Scanner scanner = new Scanner(System.in);
-        // myColour = scanner.nextLine().charAt(0);
-        // opponentColour = (myColour == 'b') ? 'o' : 'b';
-
-        // if (myColour == 'b') { // First move
-        // queue.add(board, 0, null, myColour);
-
-        // String bestMove = minimax(" ", 9, true);
-        // System.out.println(bestMove);
-        // queue.add(bestMove);
-        // updateBoard(bestMove, myColour);
-        // System.out.flush();
-        // } else { // Wait for opponent to move
-        // String input = scanner.nextLine().trim();
-        // queue.add(input);
-        // updateBoard(input, opponentColour);
-        // String bestMove = minimax(input, 9, true);
-        // System.out.println(bestMove);
-        // queue.add(bestMove);
-        // updateBoard(bestMove, myColour);
-        // System.out.flush();
-        // }
-
-        // while (scanner.hasNextLine()) {
-        // String input = scanner.nextLine().trim();
-        // String bestMove = minimax(input, 9, true);
-        // System.out.println(bestMove);
-        // queue.add(bestMove);
-        // updateBoard(bestMove, myColour);
-        // System.out.flush();
-        // }
-        // scanner.close();
     }
 }
