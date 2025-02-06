@@ -4,6 +4,10 @@
 
 > A tictactoe game which uses the minimax algorithm and alpa beta pruning to produce optimized moves. The game waits to be assigned a colour (&#34;blue&#34; or &#34;orange) in order to start. Blue goes first, if the program is assigned blue, it produces a move immediately and waits for orange to respond. If the program is assigned orange, it waits for the orange player to input a move using the Scanner.in. 
 
+## Prerequisites
+- Java ([Java installation guide](https://dev.java/download/))
+- Git
+
 ## Install
 
 ```sh
