@@ -4,45 +4,33 @@ Printing board
 - - - 
 
 Starting game, waiting for referee colour assignment
-My colour: o, Opponent colour: b
-Waiting for Player o first move
-Waiting for Player b move
+My colour: b, Opponent colour: o
+Waiting for Player b first move
 Player b move: a3
-Printing board
-b - - 
-- - - 
-- - - 
-
+Waiting for Player o move
 Player o move: b2
 Printing board
 b - - 
 - o - 
 - - - 
 
-Waiting for Player b move
-Player b move: c1
+Player b move: b3
 Printing board
-b - - 
+b b - 
 - o - 
-- - b 
+- - - 
 
-Player o move: b3
-Printing board
-b o - 
-- o - 
-- - b 
-
-Waiting for Player b move
-Player b move: a2
-Printing board
-b o - 
-b o - 
-- - b 
-
+Waiting for Player o move
 Player o move: b1
 Printing board
-b o - 
-b o - 
-- o b 
+b b - 
+- o - 
+- o - 
 
-End: Player o wins
+Player b move: c3
+Printing board
+b b b 
+- o - 
+- o - 
+
+End: Player b wins

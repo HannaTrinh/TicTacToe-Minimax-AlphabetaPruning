@@ -3,6 +3,7 @@ import java.util.Scanner;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.io.IOException;
+import java.util.concurrent.*;
 
 public class HannaTicTacToe {
     private static PrintWriter debugOutput;
@@ -216,6 +217,9 @@ public class HannaTicTacToe {
         }
     }
 
+    private static final int TIME_LIMIT = 2; // time limit in seconds
+    private static ExecutorService executor = Executors.newSingleThreadExecutor();
+
     public static void main(String[] args) {
         // tail -f debug.log
         setupLogger();
@@ -248,8 +252,29 @@ public class HannaTicTacToe {
             }
         }
 
-        while (scanner.hasNextLine()) {
-            String input = scanner.nextLine().trim();
+        while (true) {
+            Future<String> inputFuture = executor.submit(() -> {
+                if (scanner.hasNextLine()) {
+                    return scanner.nextLine().trim();
+                }
+                return null; // Return null if no input
+            });
+            String input;
+
+            try {
+                input = inputFuture.get(TIME_LIMIT, TimeUnit.SECONDS);
+                if (input == null) {
+                    log("No input received within time limit");
+                    throw new TimeoutException("No input received");
+                }
+            } catch (TimeoutException e) {
+                log("Timeout waiting for input");
+                break;
+            } catch (InterruptedException | ExecutionException e) {
+                log("Error waiting for input: " + e.getMessage());
+                break;
+            }
+
             if (input.length() >= 3) { // End of game
                 log(input);
                 break;
@@ -296,5 +321,6 @@ public class HannaTicTacToe {
         }
         scanner.close();
         closeLogger();
+        executor.shutdownNow();
     }
 }
